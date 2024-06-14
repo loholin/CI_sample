@@ -1,7 +1,5 @@
 package com.example;
 
-// src/test/java/com/example/UserTest.java
-
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -46,3 +46,5 @@ Q.idea/sonarlint/securityhotspotstore/d/b/dbcff70658daf80b53ce624f6adcaa529df5ed
 Q.idea/sonarlint/securityhotspotstore/0/b/0ba1b9c7a4878802f938e331cc2d8a042087ec6b,a\b\abe25e851ee828e40a94fcb1c1be6f78ff7a04cf
 C
 settings.gradle.kts,7\4\749edfcc96398253e5b3416184e95c46621da850
+H
+.github/workflows/ci.yml,8\9\899ce9c202bf7bb5480e72836c3edc773c9c4244
