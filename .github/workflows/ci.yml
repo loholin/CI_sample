@@ -9,6 +9,7 @@ on:
       - master
 
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,6 +23,9 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt' # 또는 'zulu' 또는 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
 
       - name: Build with Gradle
         run: ./gradlew build
