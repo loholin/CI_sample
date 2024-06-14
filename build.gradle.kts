@@ -27,8 +27,11 @@ tasks.named("jacocoTestReport", JacocoReport::class.java) {
     reports {
         xml.required.set(true)
         html.required.set(true)
+        html.outputLocation.set(file("${buildDir}/reports/jacoco/test/html"))
     }
 }
+
+
 
 
 
