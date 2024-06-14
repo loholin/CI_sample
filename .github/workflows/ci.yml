@@ -8,6 +8,7 @@ on:
     branches:
       - master
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,6 +21,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '11'
+          distribution: 'adopt' # 또는 'zulu' 또는 'temurin'
 
       - name: Build with Gradle
         run: ./gradlew build
