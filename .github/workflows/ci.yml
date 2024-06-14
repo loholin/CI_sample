@@ -8,8 +8,6 @@ on:
     branches:
       - master
 
-
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,13 +26,15 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --continue
 
       - name: Run tests with coverage
-        run: ./gradlew test jacocoTestReport
+        run: ./gradlew test jacocoTestReport --continue
 
       - name: Upload coverage report
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: coverage-report
           path: build/reports/jacoco/test/html
+
