@@ -1,6 +1,5 @@
-// src/main/java/com/example/User.java
-package com.example;
 
+package com.example;
 public class User {
     private String name;
     private String email;
