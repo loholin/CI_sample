@@ -1,3 +1,4 @@
+// src/main/java/com/example/User.java
 package com.example;
 
 public class User {
@@ -5,6 +6,9 @@ public class User {
     private String email;
 
     public User(String name, String email) {
+        if (!email.contains("@")) {
+            throw new IllegalArgumentException("Invalid email address");
+        }
         this.name = name;
         this.email = email;
     }
@@ -17,5 +21,6 @@ public class User {
         return email;
     }
 }
+
 
 
