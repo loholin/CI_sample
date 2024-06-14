@@ -40,6 +40,14 @@ jobs:
       - name: Generate coverage report
         run: ./gradlew jacocoTestReport || true
 
+      # xunit-viewer 설치
+      - name: Install xunit-viewer
+        run: npm install -g xunit-viewer
+
+      # JUnit XML을 HTML로 변환
+      - name: Convert JUnit XML to HTML
+        run: xunit-viewer --results=build/test-results/test --output=build/reports/tests/test/index.html
+
       # 커버리지 보고서 업로드
       - name: Upload coverage report
         if: always()
@@ -54,4 +62,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-report
-          path: build/test-results/test
+          path: build/reports/tests/test
