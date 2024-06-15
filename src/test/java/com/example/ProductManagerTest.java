@@ -51,6 +51,11 @@ public class ProductManagerTest {
     }
 
     @Test
+    public void testGetProductWithEmptyList() {
+        assertNull(productManager.getProduct("Any Product"));
+    }
+
+    @Test
     public void testGetProductsAbovePrice() {
         productManager.addProduct(new Product("Laptop", 1000.0));
         productManager.addProduct(new Product("Smartphone", 700.0));
@@ -60,16 +65,6 @@ public class ProductManagerTest {
         assertEquals(2, expensiveProducts.size());
         assertTrue(expensiveProducts.stream().anyMatch(p -> p.getName().equals("Laptop")));
         assertTrue(expensiveProducts.stream().anyMatch(p -> p.getName().equals("Smartphone")));
-    }
-
-    @Test
-    public void testGetTotalPrice() {
-        productManager.addProduct(new Product("Laptop", 1000.0));
-        productManager.addProduct(new Product("Smartphone", 700.0));
-        productManager.addProduct(new Product("Tablet", 300.0));
-
-        double totalPrice = productManager.getTotalPrice();
-        assertEquals(2000.0, totalPrice);
     }
 
     @Test
@@ -86,6 +81,22 @@ public class ProductManagerTest {
     }
 
     @Test
+    public void testGetProductsAbovePriceWithNoProducts() {
+        List<Product> expensiveProducts = productManager.getProductsAbovePrice(600.0);
+        assertEquals(0, expensiveProducts.size());
+    }
+
+    @Test
+    public void testGetTotalPrice() {
+        productManager.addProduct(new Product("Laptop", 1000.0));
+        productManager.addProduct(new Product("Smartphone", 700.0));
+        productManager.addProduct(new Product("Tablet", 300.0));
+
+        double totalPrice = productManager.getTotalPrice();
+        assertEquals(2000.0, totalPrice);
+    }
+
+    @Test
     public void testGetTotalPriceWithNullProduct() {
         productManager.addProduct(null); // Add null product to the list
         productManager.addProduct(new Product("Laptop", 1000.0));
@@ -97,9 +108,9 @@ public class ProductManagerTest {
     }
 
     @Test
-    public void testGetProductReturnsNull() {
-        // This test covers the case where getProduct should return null
-        productManager.addProduct(new Product("Laptop", 1000.0));
-        assertNull(productManager.getProduct("Nonexistent Product"));
+    public void testGetTotalPriceWithNoProducts() {
+        double totalPrice = productManager.getTotalPrice();
+        assertEquals(0.0, totalPrice);
     }
 }
+
