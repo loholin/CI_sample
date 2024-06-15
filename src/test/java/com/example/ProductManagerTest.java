@@ -196,6 +196,11 @@ public class ProductManagerTest {
         assertEquals(2, result.size());
         assertTrue(result.contains(product1));
         assertTrue(result.contains(product2));
+
+        // 추가 테스트: Product가 null일 때
+        result = productManager.getProductsAbovePrice(1000.0);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(product1));
     }
 
     @Test
@@ -211,6 +216,11 @@ public class ProductManagerTest {
         productManager.addProduct(product4);
 
         double totalPrice = productManager.getTotalPrice();
+        assertEquals(2000.0, totalPrice); // Null product should not affect the total price
+
+        // 추가 테스트: Product가 null일 때
+        productManager.addProduct(null);
+        totalPrice = productManager.getTotalPrice();
         assertEquals(2000.0, totalPrice); // Null product should not affect the total price
     }
 }
