@@ -48,3 +48,17 @@ C
 settings.gradle.kts,7\4\749edfcc96398253e5b3416184e95c46621da850
 H
 .github/workflows/ci.yml,8\9\899ce9c202bf7bb5480e72836c3edc773c9c4244
+V
+&src/main/java/com/example/Product.java,f\b\fb0d6c333325c27618ca24c790781b9123834b03
+Z
+*src/main/java/com/example/UserManager.java,6\c\6ccb247b242073fefd5b1b8974588dc9ea89ed96
+]
+-src/main/java/com/example/ProductManager.java,4\2\42c52f3ceb55919c04a114cf1d6280be75b28d8b
+Z
+*src/main/java/com/example/UserAccount.java,8\d\8dc2cfc0b313fdcc4fba24fb7f3511cd4e100c44
+]
+-src/main/java/com/example/PaymentService.java,e\5\e5ddf3ced3cd6445bdf0b39d3c35279a3fed5918
+b
+2src/main/java/com/example/NotificationService.java,9\8\9853eb65b935a4e57940600ca0b227cf7e87de34
+a
+1src/test/java/com/example/ProductManagerTest.java,1\3\13844870ed2c185a027d13b3b06446c094be471c
