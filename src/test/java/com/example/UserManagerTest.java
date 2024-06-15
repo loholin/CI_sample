@@ -33,6 +33,11 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testAddUserWithNull() {
+        assertThrows(IllegalArgumentException.class, () -> userManager.addUser(null, 500.0));
+    }
+
+    @Test
     public void testNotifyUser() {
         User user = new User("Bob", "bob@example.com");
         userManager.addUser(user, 300.0);
@@ -56,6 +61,13 @@ public class UserManagerTest {
 
         assertFalse(result);
         verify(notificationService, times(1)).sendNotification(user, "Test message");
+    }
+
+    @Test
+    public void testNotifyUserWithNullUser() {
+        boolean result = userManager.notifyUser(null, notificationService, "Test message");
+        assertFalse(result);
+        verify(notificationService, never()).sendNotification(null, "Test message");
     }
 
     @Test
@@ -89,6 +101,13 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testProcessUserPaymentWithNullUserAccount() {
+        boolean result = userManager.processUserPayment(null, 100.0, paymentService, notificationService);
+        assertFalse(result);
+        verify(notificationService, times(1)).sendNotification(null, "Payment of 100.0 failed due to insufficient balance.");
+    }
+
+    @Test
     public void testGetUserReturnsNull() {
         User result = userManager.getUser("nonexistent@example.com");
         assertNull(result);
@@ -98,18 +117,6 @@ public class UserManagerTest {
     public void testGetUserAccountReturnsNull() {
         UserAccount result = userManager.getUserAccount("nonexistent@example.com");
         assertNull(result);
-    }
-
-    @Test
-    public void testNotifyUserWithNullUser() {
-        boolean result = userManager.notifyUser(null, notificationService, "Test message");
-        assertFalse(result);
-    }
-
-    @Test
-    public void testProcessUserPaymentWithNullUserAccount() {
-        boolean result = userManager.processUserPayment(null, 100.0, paymentService, notificationService);
-        assertFalse(result);
     }
 }
 

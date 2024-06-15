@@ -13,11 +13,17 @@ public class UserManager {
     }
 
     public void addUser(User user, double initialBalance) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
         users.add(user);
         userAccounts.add(new UserAccount(user, initialBalance));
     }
 
     public User getUser(String email) {
+        if (email == null) {
+            return null;
+        }
         for (User user : users) {
             if (user.getEmail().equals(email)) {
                 return user;
@@ -27,6 +33,9 @@ public class UserManager {
     }
 
     public UserAccount getUserAccount(String email) {
+        if (email == null) {
+            return null;
+        }
         for (UserAccount account : userAccounts) {
             if (account.getUser().getEmail().equals(email)) {
                 return account;
@@ -36,10 +45,20 @@ public class UserManager {
     }
 
     public boolean notifyUser(User user, NotificationService notificationService, String message) {
+        if (user == null) {
+            return false;
+        }
         return notificationService.sendNotification(user, message);
     }
 
     public boolean processUserPayment(UserAccount userAccount, double amount, PaymentService paymentService, NotificationService notificationService) {
+        if (userAccount == null || notificationService == null) {
+            if (notificationService != null) {
+                notificationService.sendNotification(null, "Payment of " + amount + " failed due to insufficient balance.");
+            }
+            return false;
+        }
+
         if (paymentService.processPayment(userAccount, amount)) {
             notificationService.sendNotification(userAccount.getUser(), "Payment of " + amount + " processed successfully.");
             return true;

@@ -24,6 +24,11 @@ public class ProductManagerTest {
     }
 
     @Test
+    public void testAddProductWithNull() {
+        assertThrows(IllegalArgumentException.class, () -> productManager.addProduct(null));
+    }
+
+    @Test
     public void testGetProduct() {
         Product product = new Product("Smartphone", 700.0);
         productManager.addProduct(product);
@@ -58,6 +63,12 @@ public class ProductManagerTest {
     @Test
     public void testGetProductNotFound() {
         Product product = productManager.getProduct("Nonexistent Product");
+        assertNull(product);
+    }
+
+    @Test
+    public void testGetProductWithNullName() {
+        Product product = productManager.getProduct(null);
         assertNull(product);
     }
 }
