@@ -127,6 +127,15 @@ public class UserManagerTest {
         boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, null);
         assertFalse(result);
     }
+
+    @Test
+    public void testProcessUserPaymentWithNullUserAccountAndNotificationService() {
+        boolean result = userManager.processUserPayment(null, 100.0, paymentService, notificationService);
+        assertFalse(result);
+        verify(notificationService, times(1)).sendNotification(null, "Payment of 100.0 failed due to insufficient balance.");
+    }
+
+
 }
 
 
