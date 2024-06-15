@@ -25,33 +25,27 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        id: build
-        run: ./gradlew build
-        continue-on-error: true
-
-      - name: Run tests
-        id: test
+      # Gradle로 빌드 및 테스트 실행, 로그 파일에 저장
+      - name: Build and Test with Gradle
+        id: build_and_test
         run: |
-          ./gradlew test
-          TEST_RESULT=$?
-          echo "TEST_EXIT_CODE=$TEST_RESULT" >> $GITHUB_ENV
-          if [ $TEST_RESULT -ne 0 ]; then
-            echo "Some tests failed."
-            exit 0 # exit 0 to continue workflow but note the failure
-          fi
-        continue-on-error: true
+          ./gradlew build test --continue > gradle_output.log 2>&1
+          echo "BUILD_EXIT_CODE=$?" >> $GITHUB_ENV
 
+      # 커버리지 보고서 생성
       - name: Generate coverage report
         if: always()
         run: ./gradlew jacocoTestReport
 
+      # xunit-viewer 설치
       - name: Install xunit-viewer
         run: npm install -g xunit-viewer
 
+      # JUnit XML을 HTML로 변환
       - name: Convert JUnit XML to HTML
         run: xunit-viewer --results=build/test-results/test --output=build/reports/tests/test/index.html
 
+      # 커버리지 보고서 업로드
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
@@ -59,6 +53,7 @@ jobs:
           name: coverage-report
           path: build/reports/jacoco/test/html
 
+      # JUnit 테스트 보고서 업로드
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v4
@@ -66,15 +61,26 @@ jobs:
           name: test-report
           path: build/reports/tests/test
 
-      - name: Check build and test results
+      # 빌드 및 테스트 로그에서 실패 여부 확인
+      - name: Check for failing tests in build log
         if: always()
         run: |
-          BUILD_EXIT_CODE=$(cat $GITHUB_ENV | grep BUILD_EXIT_CODE | cut -d '=' -f 2)
-          TEST_EXIT_CODE=$(cat $GITHUB_ENV | grep TEST_EXIT_CODE | cut -d '=' -f 2)
-          if [ "$BUILD_EXIT_CODE" -ne 0 ] || [ "$TEST_EXIT_CODE" -ne 0 ]; then
+          if grep -q "There were failing tests" gradle_output.log; then
+            echo "TESTS_FAILED=true" >> $GITHUB_ENV
+          else
+            echo "TESTS_FAILED=false" >> $GITHUB_ENV
+          fi
+
+      # 빌드 또는 테스트 실패 시 워크플로우 실패로 표시
+      - name: Fail workflow if build or tests failed
+        if: always()
+        run: |
+          source $GITHUB_ENV
+          if [ "$BUILD_EXIT_CODE" -ne 0 ] || [ "$TESTS_FAILED" = "true" ]; then
             echo "Build or tests failed."
             exit 1
           fi
+
 
 
 
