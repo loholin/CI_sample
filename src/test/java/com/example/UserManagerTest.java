@@ -38,6 +38,34 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testGetUser() {
+        User user = new User("Alice", "alice@example.com");
+        userManager.addUser(user, 500.0);
+
+        assertNotNull(userManager.getUser("alice@example.com"));
+        assertNull(userManager.getUser("bob@example.com"));
+    }
+
+    @Test
+    public void testGetUserWithNullEmail() {
+        assertNull(userManager.getUser(null));
+    }
+
+    @Test
+    public void testGetUserAccount() {
+        User user = new User("Alice", "alice@example.com");
+        userManager.addUser(user, 500.0);
+
+        assertNotNull(userManager.getUserAccount("alice@example.com"));
+        assertNull(userManager.getUserAccount("bob@example.com"));
+    }
+
+    @Test
+    public void testGetUserAccountWithNullEmail() {
+        assertNull(userManager.getUserAccount(null));
+    }
+
+    @Test
     public void testNotifyUser() {
         User user = new User("Bob", "bob@example.com");
         userManager.addUser(user, 300.0);
@@ -108,27 +136,13 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testGetUserReturnsNull() {
-        User result = userManager.getUser("nonexistent@example.com");
-        assertNull(result);
-    }
+    public void testProcessUserPaymentWithNullNotificationService() {
+        User user = new User("Charlie", "charlie@example.com");
+        userManager.addUser(user, 200.0);
+        UserAccount userAccount = userManager.getUserAccount("charlie@example.com");
 
-    @Test
-    public void testGetUserWithNullEmail() {
-        User result = userManager.getUser(null);
-        assertNull(result);
-    }
-
-    @Test
-    public void testGetUserAccountReturnsNull() {
-        UserAccount result = userManager.getUserAccount("nonexistent@example.com");
-        assertNull(result);
-    }
-
-    @Test
-    public void testGetUserAccountWithNullEmail() {
-        UserAccount result = userManager.getUserAccount(null);
-        assertNull(result);
+        boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, null);
+        assertFalse(result);
     }
 }
 
