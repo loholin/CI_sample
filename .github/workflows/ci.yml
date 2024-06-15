@@ -41,7 +41,7 @@ jobs:
       - name: Verify coverage
         if: always()
         run: |
-          ./gradlew jacocoTestCoverageVerification
+          ./gradlew jacocoTestCoverageVerification --continue
           echo "COVERAGE_EXIT_CODE=$?" >> $GITHUB_ENV
 
       # xunit-viewer 설치
