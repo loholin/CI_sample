@@ -59,6 +59,10 @@ public class UserManager {
             return false;
         }
 
+        if (notificationService == null) {
+            return false;
+        }
+
         if (paymentService.processPayment(userAccount, amount)) {
             notificationService.sendNotification(userAccount.getUser(), "Payment of " + amount + " processed successfully.");
             return true;
@@ -68,3 +72,4 @@ public class UserManager {
         }
     }
 }
+
