@@ -133,6 +133,37 @@ public class ProductManagerTest {
         List<Product> expensiveProducts = productManager.getProductsAbovePrice(-100.0);
         assertEquals(3, expensiveProducts.size());
     }
+
+    @Test
+    public void testGetProductWithMultipleEntries() {
+        Product product1 = new Product("Laptop", 1000.0);
+        Product product2 = new Product("Laptop", 1500.0);
+        productManager.addProduct(product1);
+        productManager.addProduct(product2);
+
+        Product retrievedProduct = productManager.getProduct("Laptop");
+        assertEquals(1000.0, retrievedProduct.getPrice()); // First matching product should be returned
+    }
+
+    @Test
+    public void testGetProductsAbovePriceWithAllBelowPrice() {
+        productManager.addProduct(new Product("Laptop", 500.0));
+        productManager.addProduct(new Product("Smartphone", 300.0));
+        productManager.addProduct(new Product("Tablet", 200.0));
+
+        List<Product> expensiveProducts = productManager.getProductsAbovePrice(600.0);
+        assertEquals(0, expensiveProducts.size());
+    }
+
+    @Test
+    public void testGetProductsAbovePriceWithAllNull() {
+        productManager.addProduct(null);
+        productManager.addProduct(null);
+        productManager.addProduct(null);
+
+        List<Product> expensiveProducts = productManager.getProductsAbovePrice(600.0);
+        assertEquals(0, expensiveProducts.size());
+    }
 }
 
 
