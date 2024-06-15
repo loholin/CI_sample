@@ -38,7 +38,7 @@ jobs:
 
       # 커버리지 보고서 생성
       - name: Generate coverage report
-        run: ./gradlew jacocoTestReport || true
+        run: ./gradlew jacocoTestReport
 
       # xunit-viewer 설치
       - name: Install xunit-viewer
@@ -63,3 +63,4 @@ jobs:
         with:
           name: test-report
           path: build/reports/tests/test
+
