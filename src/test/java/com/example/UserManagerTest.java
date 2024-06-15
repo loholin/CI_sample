@@ -46,6 +46,19 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testNotifyUserReturnsFalse() {
+        User user = new User("Eve", "eve@example.com");
+        userManager.addUser(user, 300.0);
+
+        when(notificationService.sendNotification(user, "Test message")).thenReturn(false);
+
+        boolean result = userManager.notifyUser(user, notificationService, "Test message");
+
+        assertFalse(result);
+        verify(notificationService, times(1)).sendNotification(user, "Test message");
+    }
+
+    @Test
     public void testProcessUserPayment() {
         User user = new User("Charlie", "charlie@example.com");
         userManager.addUser(user, 200.0);
@@ -74,5 +87,30 @@ public class UserManagerTest {
         verify(paymentService, times(1)).processPayment(userAccount, 100.0);
         verify(notificationService, times(1)).sendNotification(user, "Payment of 100.0 failed due to insufficient balance.");
     }
+
+    @Test
+    public void testGetUserReturnsNull() {
+        User result = userManager.getUser("nonexistent@example.com");
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetUserAccountReturnsNull() {
+        UserAccount result = userManager.getUserAccount("nonexistent@example.com");
+        assertNull(result);
+    }
+
+    @Test
+    public void testNotifyUserWithNullUser() {
+        boolean result = userManager.notifyUser(null, notificationService, "Test message");
+        assertFalse(result);
+    }
+
+    @Test
+    public void testProcessUserPaymentWithNullUserAccount() {
+        boolean result = userManager.processUserPayment(null, 100.0, paymentService, notificationService);
+        assertFalse(result);
+    }
 }
+
 
