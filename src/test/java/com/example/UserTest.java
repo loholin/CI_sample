@@ -7,8 +7,8 @@ public class UserTest {
     @Test
     public void testValidUser() {
         User user = new User("Alice", "alice@example.com");
-        assertEquals("Alice", user.getName());
-        assertEquals("alice@example.com", user.getEmail());
+        assertEquals("Alice", user.name());
+        assertEquals("alice@example.com", user.email());
     }
 
     @Test
