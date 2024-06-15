@@ -78,7 +78,7 @@ jobs:
       - name: Fail workflow if build or tests failed
         if: always()
         run: |
-          if [ "$BUILD_EXIT_CODE" -ne 0 ] || [ "$TEST_EXIT_CODE" -ne 0 ]; then
+          if [ ${{ env.BUILD_EXIT_CODE }} -ne 0 ] || [ ${{ env.TEST_EXIT_CODE }} -ne 0 ]; then
             exit 1
           fi
 
