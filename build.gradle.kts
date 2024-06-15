@@ -14,6 +14,8 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.mockito:mockito-core:3.+")
+    testImplementation("junit:junit:4.13.2") // JUnit 4 의존성 추가
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.9.1") // JUnit Vintage Engine 추가
 }
 
 tasks.test {
@@ -72,6 +74,7 @@ tasks.named("jacocoTestCoverageVerification", JacocoCoverageVerification::class.
         }
     }
 }
+
 
 
 

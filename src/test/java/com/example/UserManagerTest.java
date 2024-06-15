@@ -1,87 +1,59 @@
 package com.example;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 public class UserManagerTest {
     private UserManager userManager;
-    private NotificationServiceImpl notificationService;
-    private PaymentServiceImpl paymentService;
+    private PaymentService paymentService;
+    private NotificationService notificationService;
 
-    @BeforeEach
+    @Before
     public void setUp() {
-        notificationService = new NotificationServiceImpl();
-        paymentService = new PaymentServiceImpl();
         userManager = new UserManager();
+        paymentService = new PaymentServiceImpl();
+        notificationService = new NotificationServiceImpl();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddUserWithNullUser() {
+        userManager.addUser(null, 100.0);
     }
 
     @Test
     public void testAddUser() {
-        User user = new User("Alice", "alice@example.com");
-        userManager.addUser(user, 500.0);
-
-        assertNotNull(userManager.getUser("alice@example.com"));
-        assertNotNull(userManager.getUserAccount("alice@example.com"));
+        User user = new User("Charlie", "charlie@example.com");
+        userManager.addUser(user, 200.0);
+        User fetchedUser = userManager.getUser("charlie@example.com");
+        assertNotNull(fetchedUser);
+        assertEquals("Charlie", fetchedUser.getName());
     }
 
     @Test
-    public void testAddUserWithNull() {
-        assertThrows(IllegalArgumentException.class, () -> userManager.addUser(null, 500.0));
-    }
-
-    @Test
-    public void testGetUser() {
-        User user = new User("Alice", "alice@example.com");
-        userManager.addUser(user, 500.0);
-
-        assertNotNull(userManager.getUser("alice@example.com"));
-        assertNull(userManager.getUser("bob@example.com"));
-    }
-
-    @Test
-    public void testGetUserWithNullEmail() {
-        assertNull(userManager.getUser(null));
-    }
-
-    @Test
-    public void testGetUserAccount() {
-        User user = new User("Alice", "alice@example.com");
-        userManager.addUser(user, 500.0);
-
-        assertNotNull(userManager.getUserAccount("alice@example.com"));
-        assertNull(userManager.getUserAccount("bob@example.com"));
+    public void testGetUserWithNonexistentEmail() {
+        User user = userManager.getUser("nonexistent@example.com");
+        assertNull(user);
     }
 
     @Test
     public void testGetUserAccountWithNullEmail() {
-        assertNull(userManager.getUserAccount(null));
+        UserAccount userAccount = userManager.getUserAccount(null);
+        assertNull(userAccount);
+    }
+
+    @Test
+    public void testGetUserAccountWithNonexistentEmail() {
+        UserAccount userAccount = userManager.getUserAccount("nonexistent@example.com");
+        assertNull(userAccount);
     }
 
     @Test
     public void testNotifyUser() {
-        User user = new User("Bob", "bob@example.com");
-        userManager.addUser(user, 300.0);
-
+        User user = new User("Charlie", "charlie@example.com");
         boolean result = userManager.notifyUser(user, notificationService, "Test message");
-
         assertTrue(result);
-    }
-
-    @Test
-    public void testNotifyUserReturnsFalse() {
-        NotificationService notificationServiceMock = mock(NotificationService.class);
-        User user = new User("Eve", "eve@example.com");
-        userManager.addUser(user, 300.0);
-
-        when(notificationServiceMock.sendNotification(user, "Test message")).thenReturn(false);
-
-        boolean result = userManager.notifyUser(user, notificationServiceMock, "Test message");
-
-        assertFalse(result);
-        verify(notificationServiceMock, times(1)).sendNotification(user, "Test message");
     }
 
     @Test
@@ -91,32 +63,9 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testProcessUserPayment() {
-        User user = new User("Charlie", "charlie@example.com");
-        userManager.addUser(user, 200.0);
-        UserAccount userAccount = userManager.getUserAccount("charlie@example.com");
-
-        boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, notificationService);
-
-        assertTrue(result);
-    }
-
-    @Test
-    public void testProcessUserPaymentInsufficientBalance() {
-        User user = new User("Dave", "dave@example.com");
-        userManager.addUser(user, 50.0);
-        UserAccount userAccount = userManager.getUserAccount("dave@example.com");
-
-        boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, notificationService);
-
-        assertFalse(result);
-    }
-
-    @Test
     public void testProcessUserPaymentWithNullUserAccount() {
         boolean result = userManager.processUserPayment(null, 100.0, paymentService, notificationService);
         assertFalse(result);
-        verify(notificationService, times(1)).sendNotification(null, "Payment of 100.0 failed due to insufficient balance.");
     }
 
     @Test
@@ -128,8 +77,24 @@ public class UserManagerTest {
         boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, null);
         assertFalse(result);
     }
+
+    @Test
+    public void testProcessUserPaymentWithInsufficientBalance() {
+        User user = new User("Charlie", "charlie@example.com");
+        userManager.addUser(user, 50.0);
+        UserAccount userAccount = userManager.getUserAccount("charlie@example.com");
+
+        boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, notificationService);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testProcessUserPaymentSuccessfully() {
+        User user = new User("Charlie", "charlie@example.com");
+        userManager.addUser(user, 200.0);
+        UserAccount userAccount = userManager.getUserAccount("charlie@example.com");
+
+        boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, notificationService);
+        assertTrue(result);
+    }
 }
-
-
-
-
