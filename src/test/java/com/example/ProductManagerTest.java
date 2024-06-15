@@ -95,4 +95,11 @@ public class ProductManagerTest {
         double totalPrice = productManager.getTotalPrice();
         assertEquals(2000.0, totalPrice); // Null product should not affect the total price
     }
+
+    @Test
+    public void testGetProductReturnsNull() {
+        // This test covers the case where getProduct should return null
+        productManager.addProduct(new Product("Laptop", 1000.0));
+        assertNull(productManager.getProduct("Nonexistent Product"));
+    }
 }
