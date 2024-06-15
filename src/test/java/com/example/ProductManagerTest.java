@@ -112,5 +112,27 @@ public class ProductManagerTest {
         double totalPrice = productManager.getTotalPrice();
         assertEquals(0.0, totalPrice);
     }
+
+    @Test
+    public void testGetProductsAbovePriceWithExactPrice() {
+        productManager.addProduct(new Product("Laptop", 1000.0));
+        productManager.addProduct(new Product("Smartphone", 700.0));
+        productManager.addProduct(new Product("Tablet", 300.0));
+
+        List<Product> expensiveProducts = productManager.getProductsAbovePrice(700.0);
+        assertEquals(1, expensiveProducts.size());
+        assertTrue(expensiveProducts.stream().anyMatch(p -> p.getName().equals("Laptop")));
+    }
+
+    @Test
+    public void testGetProductsAbovePriceWithNegativePrice() {
+        productManager.addProduct(new Product("Laptop", 1000.0));
+        productManager.addProduct(new Product("Smartphone", 700.0));
+        productManager.addProduct(new Product("Tablet", 300.0));
+
+        List<Product> expensiveProducts = productManager.getProductsAbovePrice(-100.0);
+        assertEquals(3, expensiveProducts.size());
+    }
 }
+
 
