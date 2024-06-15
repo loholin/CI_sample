@@ -114,8 +114,20 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testGetUserWithNullEmail() {
+        User result = userManager.getUser(null);
+        assertNull(result);
+    }
+
+    @Test
     public void testGetUserAccountReturnsNull() {
         UserAccount result = userManager.getUserAccount("nonexistent@example.com");
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetUserAccountWithNullEmail() {
+        UserAccount result = userManager.getUserAccount(null);
         assertNull(result);
     }
 }
