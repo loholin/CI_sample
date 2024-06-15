@@ -74,13 +74,6 @@ jobs:
         id: build
         run: ./gradlew build
 
-      # 빌드 또는 테스트 실패 시 워크플로우 실패로 표시
-      - name: Fail workflow if build or tests failed
-        if: always()
-        run: |
-          if [ "$BUILD_EXIT_CODE" -ne 0 ] || [ "$TEST_EXIT_CODE" -ne 0 ]; then
-            exit 1
-          fi
 
 
 
