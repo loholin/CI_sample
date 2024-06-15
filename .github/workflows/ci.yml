@@ -30,30 +30,29 @@ jobs:
 
       # Gradle로 빌드
       - name: Build with Gradle
-        run: |
-          ./gradlew build || true
-          echo "BUILD_EXIT_CODE=$?" >> $GITHUB_ENV
+        id: build
+        run: ./gradlew build
 
-      # 테스트 실행 (오류 발생 시 전체 워크플로우 실패로 표시)
-      - name: Run tests and capture result
+      # 테스트 실행
+      - name: Run tests
+        id: test
         run: |
-          ./gradlew test || true
+          ./gradlew test
           echo "TEST_EXIT_CODE=$?" >> $GITHUB_ENV
 
       # 커버리지 보고서 생성
       - name: Generate coverage report
-        run: |
-          ./gradlew jacocoTestReport || true
+        if: always()
+        run: ./gradlew jacocoTestReport
 
       # xunit-viewer 설치
       - name: Install xunit-viewer
-        run: |
-          npm install -g xunit-viewer || true
+        run: npm install -g xunit-viewer
 
       # JUnit XML을 HTML로 변환
       - name: Convert JUnit XML to HTML
         run: |
-          xunit-viewer --results=build/test-results/test --output=build/reports/tests/test/index.html || true
+          xunit-viewer --results=build/test-results/test --output=build/reports/tests/test/index.html
 
       # 커버리지 보고서 업로드
       - name: Upload coverage report
@@ -73,8 +72,9 @@ jobs:
 
       # 빌드 또는 테스트 실패 시 워크플로우 실패로 표시
       - name: Fail workflow if build or tests failed
-        if: env.BUILD_EXIT_CODE != '0' || env.TEST_EXIT_CODE != '0'
+        if: failure() || env.TEST_EXIT_CODE != '0'
         run: exit 1
+
 
 
 
