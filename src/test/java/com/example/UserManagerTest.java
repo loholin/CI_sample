@@ -25,6 +25,11 @@ public class UserManagerTest {
     @Test
     public void testAddUser() {
         User user = new User("Alice", "alice@example.com");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            userManager.addUser(null, 500.0);
+        });
+
         userManager.addUser(user, 500.0);
 
         assertNotNull(userManager.getUser("alice@example.com"));
@@ -32,8 +37,32 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testNotifyUser() {
+    public void testGetUser() {
+        assertNull(userManager.getUser(null));
+
         User user = new User("Bob", "bob@example.com");
+        userManager.addUser(user, 300.0);
+
+        assertEquals(user, userManager.getUser("bob@example.com"));
+        assertNull(userManager.getUser("nonexistent@example.com"));
+    }
+
+    @Test
+    public void testGetUserAccount() {
+        assertNull(userManager.getUserAccount(null));
+
+        User user = new User("Charlie", "charlie@example.com");
+        userManager.addUser(user, 400.0);
+
+        assertNotNull(userManager.getUserAccount("charlie@example.com"));
+        assertNull(userManager.getUserAccount("nonexistent@example.com"));
+    }
+
+    @Test
+    public void testNotifyUser() {
+        assertFalse(userManager.notifyUser(null, notificationService, "Test message"));
+
+        User user = new User("Dave", "dave@example.com");
         userManager.addUser(user, 300.0);
 
         when(notificationService.sendNotification(user, "Test message")).thenReturn(true);
@@ -46,9 +75,9 @@ public class UserManagerTest {
 
     @Test
     public void testProcessUserPayment() {
-        User user = new User("Charlie", "charlie@example.com");
+        User user = new User("Eve", "eve@example.com");
         userManager.addUser(user, 200.0);
-        UserAccount userAccount = userManager.getUserAccount("charlie@example.com");
+        UserAccount userAccount = userManager.getUserAccount("eve@example.com");
 
         when(paymentService.processPayment(userAccount, 100.0)).thenReturn(true);
 
@@ -61,9 +90,9 @@ public class UserManagerTest {
 
     @Test
     public void testProcessUserPaymentInsufficientBalance() {
-        User user = new User("Dave", "dave@example.com");
+        User user = new User("Frank", "frank@example.com");
         userManager.addUser(user, 50.0);
-        UserAccount userAccount = userManager.getUserAccount("dave@example.com");
+        UserAccount userAccount = userManager.getUserAccount("frank@example.com");
 
         when(paymentService.processPayment(userAccount, 100.0)).thenReturn(false);
 
@@ -81,6 +110,7 @@ public class UserManagerTest {
         verify(notificationService, times(1)).sendNotification(null, "Payment of 100.0 failed due to insufficient balance.");
     }
 }
+
 
 
 
