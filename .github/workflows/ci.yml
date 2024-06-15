@@ -28,7 +28,13 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-
+      # Gradle로 빌드
+      - name: Build with Gradle
+        id: build
+        run: |
+          ./gradlew build
+          echo "BUILD_EXIT_CODE=$?" >> $GITHUB_ENV
+        continue-on-error: true
 
       # 테스트 실행
       - name: Run tests
@@ -68,11 +74,14 @@ jobs:
           name: test-report
           path: build/reports/tests/test
 
+      # 빌드 또는 테스트 실패 시 워크플로우 실패로 표시
+      - name: Fail workflow if build or tests failed
+        if: always()
+        run: |
+          if [ "$BUILD_EXIT_CODE" -ne 0 ] || [ "$TEST_EXIT_CODE" -ne 0 ]; then
+            exit 1
+          fi
 
-      # Gradle로 빌드
-      - name: Build with Gradle
-        id: build
-        run: ./gradlew build
 
 
 
