@@ -31,12 +31,11 @@ jobs:
       # Gradle로 빌드
       - name: Build with Gradle
         run: ./gradlew build
-        continue-on-error: false
 
       # 테스트 실행 (오류 발생 시 전체 워크플로우 실패로 표시)
       - name: Run tests
-        run: ./gradlew test
-        continue-on-error: false
+        id: test
+        run: ./gradlew test || echo "Test failures detected" && echo "TEST_FAILED=true" >> $GITHUB_ENV
 
       # 커버리지 보고서 생성
       - name: Generate coverage report
@@ -68,4 +67,10 @@ jobs:
         with:
           name: test-report
           path: build/reports/tests/test
+
+      # 테스트 실패 시 워크플로우 실패로 표시
+      - name: Fail workflow if tests failed
+        if: env.TEST_FAILED == 'true'
+        run: exit 1
+
 
