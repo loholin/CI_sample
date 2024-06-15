@@ -2,7 +2,6 @@ package com.example;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 
 public class UserManagerTest {
@@ -34,6 +33,12 @@ public class UserManagerTest {
     @Test
     public void testGetUserWithNonexistentEmail() {
         User user = userManager.getUser("nonexistent@example.com");
+        assertNull(user);
+    }
+
+    @Test
+    public void testGetUserWithNullEmail() {
+        User user = userManager.getUser(null);
         assertNull(user);
     }
 
@@ -93,6 +98,26 @@ public class UserManagerTest {
         User user = new User("Charlie", "charlie@example.com");
         userManager.addUser(user, 200.0);
         UserAccount userAccount = userManager.getUserAccount("charlie@example.com");
+
+        boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, notificationService);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testProcessUserPaymentWithNullPaymentService() {
+        User user = new User("Charlie", "charlie@example.com");
+        userManager.addUser(user, 200.0);
+        UserAccount userAccount = userManager.getUserAccount("charlie@example.com");
+
+        boolean result = userManager.processUserPayment(userAccount, 100.0, null, notificationService);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testProcessUserPaymentWithSufficientBalance() {
+        User user = new User("Alice", "alice@example.com");
+        userManager.addUser(user, 150.0);
+        UserAccount userAccount = userManager.getUserAccount("alice@example.com");
 
         boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, notificationService);
         assertTrue(result);
