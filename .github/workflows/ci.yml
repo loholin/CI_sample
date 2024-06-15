@@ -30,11 +30,11 @@ jobs:
 
       # Gradle로 빌드
       - name: Build with Gradle
-        run: ./gradlew build --continue || true
+        run: ./gradlew build
 
       # 테스트 실행
       - name: Run tests
-        run: ./gradlew test --continue || true
+        run: ./gradlew test
 
       # 커버리지 보고서 생성
       - name: Generate coverage report

@@ -1,13 +1,10 @@
-
 package com.example;
+
 public class User {
     private String name;
     private String email;
 
     public User(String name, String email) {
-        if (!email.contains("@")) {
-            throw new IllegalArgumentException("Invalid email address");
-        }
         this.name = name;
         this.email = email;
     }
