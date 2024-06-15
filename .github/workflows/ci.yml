@@ -76,9 +76,14 @@ jobs:
         if: always()
         run: |
           source $GITHUB_ENV
-          if [ "$BUILD_EXIT_CODE" -ne 0 ] || [ "$TESTS_FAILED" = "true" ]; then
-            echo "Build or tests failed."
+          if [ "$BUILD_EXIT_CODE" -ne 0 ]; then
+            echo "Build failed."
             exit 1
+          elif [ "$TESTS_FAILED" = "true" ]; then
+            echo "Tests failed."
+            exit 1
+          else
+            echo "Build and tests succeeded."
           fi
 
 
