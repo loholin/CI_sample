@@ -2,6 +2,7 @@ package com.example;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 public class UserManagerTest {
@@ -84,6 +85,16 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testProcessUserPaymentWithNullPaymentService() {
+        User user = new User("Charlie", "charlie@example.com");
+        userManager.addUser(user, 200.0);
+        UserAccount userAccount = userManager.getUserAccount("charlie@example.com");
+
+        boolean result = userManager.processUserPayment(userAccount, 100.0, null, notificationService);
+        assertFalse(result);
+    }
+
+    @Test
     public void testProcessUserPaymentWithInsufficientBalance() {
         User user = new User("Charlie", "charlie@example.com");
         userManager.addUser(user, 50.0);
@@ -101,16 +112,6 @@ public class UserManagerTest {
 
         boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, notificationService);
         assertTrue(result);
-    }
-
-    @Test
-    public void testProcessUserPaymentWithNullPaymentService() {
-        User user = new User("Charlie", "charlie@example.com");
-        userManager.addUser(user, 200.0);
-        UserAccount userAccount = userManager.getUserAccount("charlie@example.com");
-
-        boolean result = userManager.processUserPayment(userAccount, 100.0, null, notificationService);
-        assertFalse(result);
     }
 
     @Test
