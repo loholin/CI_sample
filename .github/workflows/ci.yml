@@ -27,29 +27,30 @@ jobs:
 
       - name: Build with Gradle
         id: build
-        run: |
-          ./gradlew build
+        run: ./gradlew build
         continue-on-error: true
 
       - name: Run tests
         id: test
         run: |
-          ./gradlew test --continue
-          echo "TEST_EXIT_CODE=$?" >> $GITHUB_ENV
+          ./gradlew test
+          TEST_RESULT=$?
+          echo "TEST_EXIT_CODE=$TEST_RESULT" >> $GITHUB_ENV
+          if [ $TEST_RESULT -ne 0 ]; then
+            echo "Some tests failed."
+            exit 0 # exit 0 to continue workflow but note the failure
+          fi
         continue-on-error: true
 
       - name: Generate coverage report
         if: always()
         run: ./gradlew jacocoTestReport
-        continue-on-error: true
 
       - name: Install xunit-viewer
         run: npm install -g xunit-viewer
-        continue-on-error: true
 
       - name: Convert JUnit XML to HTML
         run: xunit-viewer --results=build/test-results/test --output=build/reports/tests/test/index.html
-        continue-on-error: true
 
       - name: Upload coverage report
         if: always()
@@ -57,7 +58,6 @@ jobs:
         with:
           name: coverage-report
           path: build/reports/jacoco/test/html
-        continue-on-error: true
 
       - name: Upload test report
         if: always()
@@ -65,15 +65,17 @@ jobs:
         with:
           name: test-report
           path: build/reports/tests/test
-        continue-on-error: true
 
       - name: Check build and test results
         if: always()
         run: |
-          if [ "${{ env.BUILD_EXIT_CODE }}" -ne 0 ] || [ "${{ env.TEST_EXIT_CODE }}" -ne 0 ]; then
+          BUILD_EXIT_CODE=$(cat $GITHUB_ENV | grep BUILD_EXIT_CODE | cut -d '=' -f 2)
+          TEST_EXIT_CODE=$(cat $GITHUB_ENV | grep TEST_EXIT_CODE | cut -d '=' -f 2)
+          if [ "$BUILD_EXIT_CODE" -ne 0 ] || [ "$TEST_EXIT_CODE" -ne 0 ]; then
             echo "Build or tests failed."
             exit 1
           fi
+
 
 
 
