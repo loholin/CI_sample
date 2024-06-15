@@ -1,21 +1,26 @@
-// src/test/java/com/example/UserManagerTest.java
 package com.example;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class UserManagerTest {
     private UserManager userManager;
+
+    @Mock
     private NotificationService notificationService;
+
+    @Mock
     private PaymentService paymentService;
 
     @BeforeEach
     public void setUp() {
+        MockitoAnnotations.openMocks(this);
         userManager = new UserManager();
-        notificationService = new NotificationServiceImpl();
-        paymentService = new PaymentServiceImpl();
     }
 
     @Test
@@ -65,9 +70,12 @@ public class UserManagerTest {
         User user = new User("Bob", "bob@example.com");
         userManager.addUser(user, 300.0);
 
+        when(notificationService.sendNotification(user, "Test message")).thenReturn(true);
+
         boolean result = userManager.notifyUser(user, notificationService, "Test message");
 
         assertTrue(result);
+        verify(notificationService, times(1)).sendNotification(user, "Test message");
     }
 
     @Test
@@ -75,16 +83,19 @@ public class UserManagerTest {
         User user = new User("Eve", "eve@example.com");
         userManager.addUser(user, 300.0);
 
-        // 이 경우는 실제 구현으로 false를 리턴하는 시나리오가 없으므로, true를 리턴하는 테스트로 남겨둡니다.
+        when(notificationService.sendNotification(user, "Test message")).thenReturn(false);
+
         boolean result = userManager.notifyUser(user, notificationService, "Test message");
 
-        assertTrue(result);
+        assertFalse(result);
+        verify(notificationService, times(1)).sendNotification(user, "Test message");
     }
 
     @Test
     public void testNotifyUserWithNullUser() {
         boolean result = userManager.notifyUser(null, notificationService, "Test message");
         assertFalse(result);
+        verify(notificationService, never()).sendNotification(null, "Test message");
     }
 
     @Test
@@ -93,9 +104,13 @@ public class UserManagerTest {
         userManager.addUser(user, 200.0);
         UserAccount userAccount = userManager.getUserAccount("charlie@example.com");
 
+        when(paymentService.processPayment(userAccount, 100.0)).thenReturn(true);
+
         boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, notificationService);
 
         assertTrue(result);
+        verify(paymentService, times(1)).processPayment(userAccount, 100.0);
+        verify(notificationService, times(1)).sendNotification(user, "Payment of 100.0 processed successfully.");
     }
 
     @Test
@@ -104,15 +119,20 @@ public class UserManagerTest {
         userManager.addUser(user, 50.0);
         UserAccount userAccount = userManager.getUserAccount("dave@example.com");
 
+        when(paymentService.processPayment(userAccount, 100.0)).thenReturn(false);
+
         boolean result = userManager.processUserPayment(userAccount, 100.0, paymentService, notificationService);
 
         assertFalse(result);
+        verify(paymentService, times(1)).processPayment(userAccount, 100.0);
+        verify(notificationService, times(1)).sendNotification(user, "Payment of 100.0 failed due to insufficient balance.");
     }
 
     @Test
     public void testProcessUserPaymentWithNullUserAccount() {
         boolean result = userManager.processUserPayment(null, 100.0, paymentService, notificationService);
         assertFalse(result);
+        verify(notificationService, times(1)).sendNotification(null, "Payment of 100.0 failed due to insufficient balance.");
     }
 
     @Test
@@ -125,5 +145,6 @@ public class UserManagerTest {
         assertFalse(result);
     }
 }
+
 
 
