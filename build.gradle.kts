@@ -36,9 +36,8 @@ tasks.jacocoTestReport {
     }
 }
 
-tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+tasks.named("jacocoTestCoverageVerification", JacocoCoverageVerification::class.java) {
     dependsOn(tasks.jacocoTestReport)
-
     violationRules {
         rule {
             element = "CLASS"
