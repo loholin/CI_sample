@@ -52,7 +52,7 @@ public class UserManager {
     }
 
     public boolean processUserPayment(UserAccount userAccount, double amount, PaymentService paymentService, NotificationService notificationService) {
-        if (userAccount == null || notificationService == null) {
+        if (userAccount == null) {
             if (notificationService != null) {
                 notificationService.sendNotification(null, "Payment of " + amount + " failed due to insufficient balance.");
             }
