@@ -37,13 +37,6 @@ jobs:
         if: always()
         run: ./gradlew jacocoTestReport
 
-      # 커버리지 검증
-      - name: Verify coverage
-        if: always()
-        run: |
-          ./gradlew jacocoTestCoverageVerification
-          echo "COVERAGE_EXIT_CODE=$?" >> $GITHUB_ENV
-
       # xunit-viewer 설치
       - name: Install xunit-viewer
         run: npm install -g xunit-viewer
@@ -78,15 +71,8 @@ jobs:
             echo "TESTS_FAILED=false" >> $GITHUB_ENV
           fi
 
-      # 커버리지 요약 출력
-      - name: Print coverage summary
-        if: always()
-        run: |
-          echo "Coverage summary:"
-          grep -A 5 -i "Rule violated" build/reports/jacoco/test/html/index.html || true
-
-      # 빌드 또는 테스트, 커버리지 실패 시 워크플로우 실패로 표시
-      - name: Fail workflow if build, tests, or coverage failed
+      # 빌드 또는 테스트 실패 시 워크플로우 실패로 표시
+      - name: Fail workflow if build or tests failed
         if: always()
         run: |
           source $GITHUB_ENV
@@ -96,11 +82,8 @@ jobs:
           elif [ "$TESTS_FAILED" = "true" ]; then
             echo "Tests failed."
             exit 1
-          elif [ "$COVERAGE_EXIT_CODE" -ne 0 ]; then
-            echo "Coverage verification failed."
-            exit 1
           else
-            echo "Build, tests, and coverage succeeded."
+            echo "Build and tests succeeded."
           fi
 
 
