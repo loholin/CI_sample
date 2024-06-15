@@ -33,16 +33,14 @@ jobs:
         id: build
         run: |
           ./gradlew build
-          echo "BUILD_EXIT_CODE=$?" >> $GITHUB_ENV
         continue-on-error: true
 
       # 테스트 실행
       - name: Run tests
         id: test
         run: |
-          ./gradlew test
-          echo "TEST_EXIT_CODE=$?" >> $GITHUB_ENV
-        continue-on-error: true
+          ./gradlew test || exit_code=$?
+          echo "TEST_EXIT_CODE=$exit_code" >> $GITHUB_ENV
 
       # 커버리지 보고서 생성
       - name: Generate coverage report
@@ -78,9 +76,12 @@ jobs:
       - name: Fail workflow if build or tests failed
         if: always()
         run: |
-          if [ ${{ env.BUILD_EXIT_CODE }} -ne 0 ] || [ ${{ env.TEST_EXIT_CODE }} -ne 0 ]; then
+          build_exit_code=$(cat $GITHUB_ENV | grep BUILD_EXIT_CODE | cut -d '=' -f 2)
+          test_exit_code=$(cat $GITHUB_ENV | grep TEST_EXIT_CODE | cut -d '=' -f 2)
+          if [ "$build_exit_code" -ne 0 ] || [ "$test_exit_code" -ne 0 ]; then
             exit 1
           fi
+
 
 
 
