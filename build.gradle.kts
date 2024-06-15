@@ -41,10 +41,33 @@ tasks.named("jacocoTestCoverageVerification", JacocoCoverageVerification::class.
     violationRules {
         rule {
             element = "CLASS"
+
+            // 라인 커버리지 기준
             limit {
                 counter = "LINE"
                 value = "COVEREDRATIO"
-                minimum = "0.80".toBigDecimal() // 최소 커버리지 기준 설정
+                minimum = "1.00".toBigDecimal() // 최소 라인 커버리지 기준 설정
+            }
+
+            // 메소드 커버리지 기준
+            limit {
+                counter = "METHOD"
+                value = "COVEREDRATIO"
+                minimum = "1.00".toBigDecimal() // 최소 메소드 커버리지 기준 설정
+            }
+
+            // 분기 커버리지 기준
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = "0.90".toBigDecimal() // 최소 분기 커버리지 기준 설정
+            }
+
+            // 명령어 커버리지 기준
+            limit {
+                counter = "INSTRUCTION"
+                value = "COVEREDRATIO"
+                minimum = "0.90".toBigDecimal() // 최소 명령어 커버리지 기준 설정
             }
         }
     }
