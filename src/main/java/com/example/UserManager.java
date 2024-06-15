@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserManager {
-    private List<User> users;
-    private List<UserAccount> userAccounts;
+    private final List<User> users;
+    private final List<UserAccount> userAccounts;
 
     public UserManager() {
         this.users = new ArrayList<>();
@@ -53,9 +53,10 @@ public class UserManager {
 
     public boolean processUserPayment(UserAccount userAccount, double amount, PaymentService paymentService, NotificationService notificationService) {
         if (userAccount == null) {
-
-            notificationService.sendNotification(null, "Payment of " + amount + " failed due to insufficient balance.");
-
+            if (notificationService != null) {
+                notificationService.sendNotification(null, "Payment of " + amount + " failed due to insufficient balance.");
+            }
+            return false; // Null userAccount 처리 후 false 반환
         }
 
         if (paymentService.processPayment(userAccount, amount)) {
