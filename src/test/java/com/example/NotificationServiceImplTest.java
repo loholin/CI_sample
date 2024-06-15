@@ -23,5 +23,17 @@ public class NotificationServiceImplTest {
         User user = new User("Test User", "test@example.com");
         assertFalse(notificationService.sendNotification(user, ""));
     }
+
+    @Test
+    public void testSendNotificationNullMessage() {
+        User user = new User("Test User", "test@example.com");
+        assertFalse(notificationService.sendNotification(user, null));
+    }
+
+    @Test
+    public void testSendNotificationNullUserAndMessage() {
+        assertFalse(notificationService.sendNotification(null, null));
+    }
 }
+
 

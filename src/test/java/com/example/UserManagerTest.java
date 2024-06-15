@@ -49,6 +49,13 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testGetUserEmptyEmail() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            userManager.getUser("");
+        });
+    }
+
+    @Test
     public void testGetUserNotFound() {
         assertNull(userManager.getUser("notfound@example.com"));
     }
@@ -57,6 +64,13 @@ public class UserManagerTest {
     public void testGetUserAccountNull() {
         assertThrows(IllegalArgumentException.class, () -> {
             userManager.getUserAccount(null);
+        });
+    }
+
+    @Test
+    public void testGetUserAccountEmptyEmail() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            userManager.getUserAccount("");
         });
     }
 
@@ -89,6 +103,12 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testNotifyUserNullMessage() {
+        User user = new User("Test User", "test@example.com");
+        assertFalse(userManager.notifyUser(user, notificationService, null));
+    }
+
+    @Test
     public void testProcessUserPaymentSuccess() {
         User user = new User("Test User", "test@example.com");
         userManager.addUser(user, 200.0);
@@ -112,6 +132,15 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testProcessUserPaymentNullNotificationService() {
+        User user = new User("Test User", "test@example.com");
+        userManager.addUser(user, 200.0);
+        UserAccount userAccount = userManager.getUserAccount("test@example.com");
+
+        assertFalse(userManager.processUserPayment(userAccount, 100.0, paymentService, null));
+    }
+
+    @Test
     public void testProcessUserPaymentInsufficientBalance() {
         User user = new User("Test User", "test@example.com");
         userManager.addUser(user, 50.0);
@@ -128,5 +157,15 @@ public class UserManagerTest {
 
         assertFalse(userManager.processUserPayment(userAccount, -50.0, paymentService, notificationService));
     }
+
+    @Test
+    public void testProcessUserPaymentZeroAmount() {
+        User user = new User("Test User", "test@example.com");
+        userManager.addUser(user, 100.0);
+        UserAccount userAccount = userManager.getUserAccount("test@example.com");
+
+        assertFalse(userManager.processUserPayment(userAccount, 0.0, paymentService, notificationService));
+    }
 }
+
 
