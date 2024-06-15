@@ -47,7 +47,8 @@ jobs:
 
       # xunit-viewer 설치
       - name: Install xunit-viewer
-        run: npm install -g xunit-viewer || true
+        run: |
+          npm install -g xunit-viewer || true
 
       # JUnit XML을 HTML로 변환
       - name: Convert JUnit XML to HTML
@@ -74,6 +75,7 @@ jobs:
       - name: Fail workflow if build or tests failed
         if: env.BUILD_EXIT_CODE != '0' || env.TEST_EXIT_CODE != '0'
         run: exit 1
+
 
 
 
