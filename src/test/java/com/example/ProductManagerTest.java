@@ -54,4 +54,10 @@ public class ProductManagerTest {
         double totalPrice = productManager.getTotalPrice();
         assertEquals(2000.0, totalPrice);
     }
+
+    @Test
+    public void testGetProductNotFound() {
+        Product product = productManager.getProduct("Nonexistent Product");
+        assertNull(product);
+    }
 }

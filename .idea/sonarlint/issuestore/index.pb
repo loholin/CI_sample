@@ -62,3 +62,5 @@ b
 2src/main/java/com/example/NotificationService.java,9\8\9853eb65b935a4e57940600ca0b227cf7e87de34
 a
 1src/test/java/com/example/ProductManagerTest.java,1\3\13844870ed2c185a027d13b3b06446c094be471c
+^
+.src/test/java/com/example/UserAccountTest.java,c\3\c353beed76d998f1b994f3c357f2005af7297691
