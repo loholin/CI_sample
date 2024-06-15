@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserManagerTest {
+
     @Test
     public void testAddUser() {
         UserManager userManager = new UserManager();
@@ -22,5 +23,16 @@ public class UserManagerTest {
         User retrievedUser = userManager.getUser("alice@example.com");
         assertEquals("Alice", retrievedUser.getName());
     }
+
+    @Test
+    public void testGetUserNotFound() {
+        UserManager userManager = new UserManager();
+        User user = new User("Alice", "alice@example.com");
+        userManager.addUser(user);
+
+        User retrievedUser = userManager.getUser("bob@example.com");
+        assertNull(retrievedUser);
+    }
 }
+
 
