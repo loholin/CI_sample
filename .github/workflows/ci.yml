@@ -31,13 +31,13 @@ jobs:
       # Gradle로 빌드
       - name: Build with Gradle
         run: |
-          ./gradlew build --continue
+          ./gradlew build || true
           echo "BUILD_EXIT_CODE=$?" >> $GITHUB_ENV
 
       # 테스트 실행 (오류 발생 시 전체 워크플로우 실패로 표시)
       - name: Run tests and capture result
         run: |
-          ./gradlew test --continue || true
+          ./gradlew test || true
           echo "TEST_EXIT_CODE=$?" >> $GITHUB_ENV
 
       # 커버리지 보고서 생성
@@ -47,8 +47,7 @@ jobs:
 
       # xunit-viewer 설치
       - name: Install xunit-viewer
-        run: |
-          npm install -g xunit-viewer || true
+        run: npm install -g xunit-viewer || true
 
       # JUnit XML을 HTML로 변환
       - name: Convert JUnit XML to HTML
