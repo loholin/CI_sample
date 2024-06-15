@@ -33,28 +33,35 @@ jobs:
         id: build
         run: |
           ./gradlew build
+          echo "BUILD_EXIT_CODE=$?" >> $GITHUB_ENV
         continue-on-error: true
 
       # 테스트 실행
       - name: Run tests
         id: test
         run: |
-          ./gradlew test || exit_code=$?
-          echo "TEST_EXIT_CODE=$exit_code" >> $GITHUB_ENV
+          ./gradlew test
+          echo "TEST_EXIT_CODE=$?" >> $GITHUB_ENV
+        continue-on-error: true
 
       # 커버리지 보고서 생성
       - name: Generate coverage report
         if: always()
         run: ./gradlew jacocoTestReport
+        continue-on-error: true
+
 
       # xunit-viewer 설치
       - name: Install xunit-viewer
         run: npm install -g xunit-viewer
+        continue-on-error: true
+
 
       # JUnit XML을 HTML로 변환
       - name: Convert JUnit XML to HTML
-        run: |
-          xunit-viewer --results=build/test-results/test --output=build/reports/tests/test/index.html
+        run: xunit-viewer --results=build/test-results/test --output=build/reports/tests/test/index.html
+        continue-on-error: true
+
 
       # 커버리지 보고서 업로드
       - name: Upload coverage report
@@ -63,6 +70,8 @@ jobs:
         with:
           name: coverage-report
           path: build/reports/jacoco/test/html
+        continue-on-error: true
+
 
       # JUnit 테스트 보고서 업로드
       - name: Upload test report
@@ -71,16 +80,18 @@ jobs:
         with:
           name: test-report
           path: build/reports/tests/test
+        continue-on-error: true
+
 
       # 빌드 또는 테스트 실패 시 워크플로우 실패로 표시
-      - name: Fail workflow if build or tests failed
+      - name: Check build and test results
         if: always()
         run: |
-          build_exit_code=$(cat $GITHUB_ENV | grep BUILD_EXIT_CODE | cut -d '=' -f 2)
-          test_exit_code=$(cat $GITHUB_ENV | grep TEST_EXIT_CODE | cut -d '=' -f 2)
-          if [ "$build_exit_code" -ne 0 ] || [ "$test_exit_code" -ne 0 ]; then
+          if [ "${{ env.BUILD_EXIT_CODE }}" -ne 0 ] || [ "${{ env.TEST_EXIT_CODE }}" -ne 0 ]; then
+            echo "Build or tests failed."
             exit 1
           fi
+
 
 
 
