@@ -13,57 +13,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 코드 체크아웃
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # JDK 11 설정
       - name: Set up JDK 11
         uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'adopt'
 
-      # gradlew 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      # Gradle로 빌드
       - name: Build with Gradle
         id: build
         run: |
           ./gradlew build
-          echo "BUILD_EXIT_CODE=$?" >> $GITHUB_ENV
         continue-on-error: true
 
-      # 테스트 실행
       - name: Run tests
         id: test
         run: |
-          ./gradlew test
+          ./gradlew test --continue
           echo "TEST_EXIT_CODE=$?" >> $GITHUB_ENV
         continue-on-error: true
 
-      # 커버리지 보고서 생성
       - name: Generate coverage report
         if: always()
         run: ./gradlew jacocoTestReport
         continue-on-error: true
 
-
-      # xunit-viewer 설치
       - name: Install xunit-viewer
         run: npm install -g xunit-viewer
         continue-on-error: true
 
-
-      # JUnit XML을 HTML로 변환
       - name: Convert JUnit XML to HTML
         run: xunit-viewer --results=build/test-results/test --output=build/reports/tests/test/index.html
         continue-on-error: true
 
-
-      # 커버리지 보고서 업로드
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
@@ -72,8 +59,6 @@ jobs:
           path: build/reports/jacoco/test/html
         continue-on-error: true
 
-
-      # JUnit 테스트 보고서 업로드
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v4
@@ -82,8 +67,6 @@ jobs:
           path: build/reports/tests/test
         continue-on-error: true
 
-
-      # 빌드 또는 테스트 실패 시 워크플로우 실패로 표시
       - name: Check build and test results
         if: always()
         run: |
