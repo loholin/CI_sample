@@ -164,6 +164,55 @@ public class ProductManagerTest {
         List<Product> expensiveProducts = productManager.getProductsAbovePrice(600.0);
         assertEquals(0, expensiveProducts.size());
     }
+
+    @Test
+    public void testGetProductAllBranches() {
+        Product product1 = new Product("Laptop", 1000.0);
+        Product product2 = new Product("Smartphone", 700.0);
+        Product product3 = new Product("Tablet", 300.0);
+
+        productManager.addProduct(product1);
+        productManager.addProduct(product2);
+        productManager.addProduct(product3);
+
+        assertNull(productManager.getProduct(null)); // Cover null name branch
+        assertNotNull(productManager.getProduct("Laptop")); // Cover name found branch
+        assertNull(productManager.getProduct("Nonexistent")); // Cover name not found branch
+    }
+
+    @Test
+    public void testGetProductsAbovePriceAllBranches() {
+        Product product1 = new Product("Laptop", 1000.0);
+        Product product2 = new Product("Smartphone", 700.0);
+        Product product3 = new Product("Tablet", 300.0);
+        Product product4 = null;
+
+        productManager.addProduct(product1);
+        productManager.addProduct(product2);
+        productManager.addProduct(product3);
+        productManager.addProduct(product4);
+
+        List<Product> result = productManager.getProductsAbovePrice(600.0);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(product1));
+        assertTrue(result.contains(product2));
+    }
+
+    @Test
+    public void testGetTotalPriceAllBranches() {
+        Product product1 = new Product("Laptop", 1000.0);
+        Product product2 = new Product("Smartphone", 700.0);
+        Product product3 = new Product("Tablet", 300.0);
+        Product product4 = null;
+
+        productManager.addProduct(product1);
+        productManager.addProduct(product2);
+        productManager.addProduct(product3);
+        productManager.addProduct(product4);
+
+        double totalPrice = productManager.getTotalPrice();
+        assertEquals(2000.0, totalPrice); // Null product should not affect the total price
+    }
 }
 
 
